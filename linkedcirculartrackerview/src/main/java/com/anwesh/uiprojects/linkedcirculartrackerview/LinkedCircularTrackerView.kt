@@ -7,7 +7,9 @@ import android.content.Context
 import android.view.View
 import android.view.MotionEvent
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 
 val CT_NODES : Int = 5
 
@@ -79,6 +81,68 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
             if (animated) {
                 animated = false
             }
+        }
+    }
+
+    data class CTNode(var i : Int, val state : CTState = CTState()) {
+
+        private var next : CTNode? = null
+
+        private var prev : CTNode? = null
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < CT_NODES - 1) {
+                next = CTNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            val w : Float = canvas.width.toFloat()
+            val h : Float = canvas.height.toFloat()
+            val r : Float = Math.min(w, h) / 3
+            val ballR : Float = r / 6
+            val gap : Float = 360f / CT_NODES
+            paint.strokeWidth = Math.min(w, h) / 50
+            paint.strokeCap = Paint.Cap.ROUND
+            paint.color = Color.parseColor("#d35400")
+            prev?.draw(canvas, paint)
+            canvas.save()
+            canvas.translate(w/2, h/2)
+            paint.style = Paint.Style.STROKE
+            canvas.drawArc(RectF(-r, -r, r, r), i * gap, gap * state.scales[0], false, paint)
+            canvas.save()
+            canvas.rotate(gap * (i + 1))
+            paint.style = Paint.Style.STROKE
+            canvas.drawCircle(r, 0f, ballR, paint)
+            paint.style = Paint.Style.FILL
+            canvas.drawCircle(r, 0f, ballR * state.scales[1], paint)
+            canvas.restore()
+            canvas.restore()
+        }
+
+        fun update(stopcb : (Float) -> Unit) {
+            state.update(stopcb)
+        }
+
+        fun startUpdating(startcb : () -> Unit) {
+            state.startUpdating(startcb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : CTNode {
+            var curr : CTNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
         }
     }
 }
