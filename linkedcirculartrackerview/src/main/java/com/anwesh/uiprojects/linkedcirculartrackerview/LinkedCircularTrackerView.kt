@@ -3,6 +3,7 @@ package com.anwesh.uiprojects.linkedcirculartrackerview
  * Created by anweshmishra on 24/06/18.
  */
 
+import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.MotionEvent
@@ -191,6 +192,15 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
             linkedCT.startUpdating {
                 animator.start()
             }
+        }
+    }
+
+    companion object {
+
+        fun create(activity : Activity) : LinkedCircularTrackerView {
+            val view : LinkedCircularTrackerView = LinkedCircularTrackerView(activity)
+            activity.setContentView(view)
+            return view
         }
     }
 }
