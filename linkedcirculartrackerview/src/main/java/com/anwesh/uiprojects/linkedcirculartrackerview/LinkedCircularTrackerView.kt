@@ -41,7 +41,7 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
             scales[j] += 0.1f * dir
             if (Math.abs(scales[j] - prevScale) > 1) {
                 scales[j] = prevScale + dir
-                j -= dir.toInt()
+                j += dir.toInt()
                 if (j == scales.size || j == -1) {
                     j -= dir.toInt()
                     dir = 0f
@@ -116,14 +116,17 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
             prev?.draw(canvas, paint)
             canvas.save()
             canvas.translate(w/2, h/2)
-            paint.style = Paint.Style.STROKE
-            canvas.drawArc(RectF(-r, -r, r, r), i * gap, gap * state.scales[0], false, paint)
             canvas.save()
-            canvas.rotate(gap * (i + 1))
+            canvas.rotate(gap * (i))
+            paint.style = Paint.Style.STROKE
+            canvas.drawArc(RectF(-r, -r, r, r), 0f, gap * state.scales[0] * 0.85f, false, paint)
+            canvas.save()
+            canvas.rotate(gap * state.scales[0])
             paint.style = Paint.Style.STROKE
             canvas.drawCircle(r, 0f, ballR, paint)
             paint.style = Paint.Style.FILL
             canvas.drawCircle(r, 0f, ballR * state.scales[1], paint)
+            canvas.restore()
             canvas.restore()
             canvas.restore()
         }
@@ -164,6 +167,7 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
                 curr = curr.getNext(dir) {
                     dir *= -1
                 }
+                stopcb(it)
             }
         }
 
