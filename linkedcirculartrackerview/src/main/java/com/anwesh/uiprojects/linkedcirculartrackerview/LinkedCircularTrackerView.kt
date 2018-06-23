@@ -168,4 +168,27 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
             curr.startUpdating(startcb)
         }
     }
+
+    data class Renderer(var view : LinkedCircularTrackerView) {
+
+        private val linkedCT : LinkedCT = LinkedCT(0)
+
+        private val animator : CTAnimator = CTAnimator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#212121"))
+            linkedCT.draw(canvas, paint)
+            animator.animate {
+                linkedCT.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            linkedCT.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
