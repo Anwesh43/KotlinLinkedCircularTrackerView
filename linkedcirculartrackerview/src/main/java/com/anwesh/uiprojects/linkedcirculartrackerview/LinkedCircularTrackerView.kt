@@ -116,10 +116,10 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
             val r : Float = Math.min(w, h) / 3
             val ballR : Float = r / 6
             val gap : Float = 360f / CT_NODES
+            prev?.draw(canvas, paint)
             paint.strokeWidth = Math.min(w, h) / 50
             paint.strokeCap = Paint.Cap.ROUND
             paint.color = Color.parseColor("#d35400")
-            prev?.draw(canvas, paint)
             canvas.save()
             canvas.translate(w/2, h/2)
             canvas.save()
@@ -135,6 +135,8 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
             canvas.restore()
             canvas.restore()
             canvas.restore()
+            paint.color = Color.parseColor("#00C853")
+            canvas.drawLine(i * gap, 0.8f * h, i * gap + (gap / 2) * (state.scales[0] + state.scales[1]), 0.8f * h, paint)
         }
 
         fun update(stopcb : (Float, Int) -> Unit) {
