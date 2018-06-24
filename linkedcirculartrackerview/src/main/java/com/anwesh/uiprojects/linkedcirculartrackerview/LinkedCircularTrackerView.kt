@@ -5,6 +5,7 @@ package com.anwesh.uiprojects.linkedcirculartrackerview
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.view.View
 import android.view.MotionEvent
 import android.graphics.Canvas
@@ -136,7 +137,8 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
             canvas.restore()
             canvas.restore()
             paint.color = Color.parseColor("#00C853")
-            canvas.drawLine(i * gap, 0.8f * h, i * gap + (gap / 2) * (state.scales[0] + state.scales[1]), 0.8f * h, paint)
+            val x_gap : Float = w / CT_NODES
+            canvas.drawLine(i * x_gap, 0.8f * h, i * x_gap + (x_gap / 2) * (state.scales[0] + state.scales[1]), 0.8f * h, paint)
         }
 
         fun update(stopcb : (Float, Int) -> Unit) {
@@ -216,6 +218,7 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
 
         fun create(activity : Activity) : LinkedCircularTrackerView {
             val view : LinkedCircularTrackerView = LinkedCircularTrackerView(activity)
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             activity.setContentView(view)
             return view
         }
