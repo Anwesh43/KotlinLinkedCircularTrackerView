@@ -26,4 +26,4 @@
 
 #### Demo
 
-<img src="https://github.com/Anwesh43/KotlinLinkedCircularTrackerView/blob/master/screenshots/kotlinlinkedcirculartrackerview.gif" width="300px" height="600px">
+<img src="https://github.com/Anwesh43/KotlinLinkedCircularTrackerView/blob/master/screenshots/kotlinlinkedcirculartrackerview.gif" width="350px" height="600px">
