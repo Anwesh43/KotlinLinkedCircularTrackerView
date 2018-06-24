@@ -20,8 +20,14 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
 
     private val renderer : Renderer = Renderer(this)
 
+    var onStepCompletionListener : StepCompletionListener? = null
+
     override fun onDraw(canvas : Canvas) {
         renderer.render(canvas, paint)
+    }
+
+    fun addOnStepCompletionListener(onComplete : (Int) -> Unit) {
+        onStepCompletionListener = StepCompletionListener(onComplete)
     }
 
     override fun onTouchEvent(event : MotionEvent) : Boolean {
@@ -131,8 +137,10 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
             canvas.restore()
         }
 
-        fun update(stopcb : (Float) -> Unit) {
-            state.update(stopcb)
+        fun update(stopcb : (Float, Int) -> Unit) {
+            state.update {
+                stopcb(it, i)
+            }
         }
 
         fun startUpdating(startcb : () -> Unit) {
@@ -162,12 +170,12 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
             curr.draw(canvas, paint)
         }
 
-        fun update(stopcb : (Float) -> Unit) {
-            curr.update {
+        fun update(stopcb : (Float, Int) -> Unit) {
+            curr.update {scale, j ->
                 curr = curr.getNext(dir) {
                     dir *= -1
                 }
-                stopcb(it)
+                stopcb(scale, j)
             }
         }
 
@@ -186,8 +194,11 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
             canvas.drawColor(Color.parseColor("#212121"))
             linkedCT.draw(canvas, paint)
             animator.animate {
-                linkedCT.update {
+                linkedCT.update { scale, j ->
                     animator.stop()
+                    when(scale) {
+                        1f -> view.onStepCompletionListener?.onComplete?.invoke(j)
+                    }
                 }
             }
         }
@@ -207,4 +218,6 @@ class LinkedCircularTrackerView (ctx : Context) : View(ctx) {
             return view
         }
     }
+
+    data class StepCompletionListener(var onComplete: (Int) -> Unit)
 }
